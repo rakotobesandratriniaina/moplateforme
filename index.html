@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title> Gestion des interventions GPS IDR</title>
+  <title>Gestion des interventions GPS IDR</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
     body {
@@ -23,7 +23,6 @@
       background: rgba(0,0,0,0.3);
       z-index: -1;
     }
-<button onclick="logout()">Déconnexion</button>
 
     header {
       display: flex;
@@ -100,7 +99,6 @@
       outline: none;
       box-shadow: 0 0 5px rgba(0,123,255,0.5);
     }
-    
 
     input[type="submit"], #exportBtn {
       background-color: #007BFF;
@@ -203,6 +201,13 @@
 </head>
 <body>
 
+  <script>
+    // Vérification de la connexion : si non connecté, rediriger vers login.html
+    if (sessionStorage.getItem("authenticated") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
+
   <header>
     <img src="logo-slmi.png" alt="Logo SLM-I" />
     <h1>Plateforme S.L.M-I – Gestion des interventions GPS</h1>
@@ -274,181 +279,149 @@
   </table>
 
   <script>
-  if (sessionStorage.getItem("authenticated") !== "true") {
-    window.location.href = "login.html";
-  }
-
-  function logout() {
-    sessionStorage.removeItem("authenticated");
-    window.location.href = "login.html";
-  }
-
-  const form = document.getElementById('interventionForm');
-  const tableBody = document.querySelector('#interventionTable tbody');
-  const exportBtn = document.getElementById('exportBtn');
-  const searchInput = document.getElementById('searchInput');
-
-  let editIndex = null; // Stocke l'index de l'intervention en cours d'édition
-
-  // Charger les données depuis le localStorage
-  function loadInterventions() {
-    const data = JSON.parse(localStorage.getItem('interventions')) || [];
-    tableBody.innerHTML = '';
-    data.forEach((intervention, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${intervention.client}</td>
-        <td>${intervention.technicien}</td>
-        <td>${intervention.immat}</td>
-        <td>${intervention.vehicule}</td>
-        <td>${intervention.type}</td>
-        <td>${intervention.intervention}</td>
-        <td>${intervention.date}</td>
-        <td>${intervention.lieu}</td>
-        <td>${intervention.contact}</td>
-        <td>${intervention.finalite}</td>
-        <td>
-          <button class="editBtn" data-index="${index}">Modifier</button>
-          <button class="deleteBtn" data-index="${index}">Supprimer</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    });
-  }
-
-  // Gérer l'ajout ou la modification
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const interventionData = {
-      client: document.getElementById('client').value.trim(),
-      technicien: document.getElementById('technicien').value.trim(),
-      immat: document.getElementById('immat').value.trim(),
-      vehicule: document.getElementById('vehicule').value.trim(),
-      type: document.getElementById('type').value,
-      intervention: document.getElementById('intervention').value.trim(),
-      date: document.getElementById('dateIntervention').value,
-      lieu: document.getElementById('lieu').value.trim(),
-      contact: document.getElementById('contact').value.trim(),
-      finalite: document.getElementById('finalite').value.trim()
-    };
-
-    let data = JSON.parse(localStorage.getItem('interventions')) || [];
-
-    if (editIndex !== null) {
-      // Mode édition
-      data[editIndex] = interventionData;
-      editIndex = null;
-    } else {
-      // Mode ajout
-      data.push(interventionData);
+    function logout() {
+      sessionStorage.removeItem("authenticated");
+      alert("Vous êtes déconnecté.");
+      window.location.href = "login.html";
     }
 
-    localStorage.setItem('interventions', JSON.stringify(data));
-    loadInterventions();
-    form.reset();
-  });
+    const form = document.getElementById('interventionForm');
+    const tableBody = document.querySelector('#interventionTable tbody');
+    const exportBtn = document.getElementById('exportBtn');
+    const searchInput = document.getElementById('searchInput');
 
-  // Gérer la suppression et la modification
-  tableBody.addEventListener('click', (e) => {
-    const index = e.target.getAttribute('data-index');
-    let data = JSON.parse(localStorage.getItem('interventions')) || [];
+    let editIndex = null;
 
-    if (e.target.classList.contains('deleteBtn')) {
-      if (confirm("Voulez-vous vraiment supprimer cette intervention ?")) {
-        data.splice(index, 1);
-        localStorage.setItem('interventions', JSON.stringify(data));
-        loadInterventions();
+    function loadInterventions() {
+      const data = JSON.parse(localStorage.getItem('interventions')) || [];
+      tableBody.innerHTML = '';
+      data.forEach((intervention, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${intervention.client}</td>
+          <td>${intervention.technicien}</td>
+          <td>${intervention.immat}</td>
+          <td>${intervention.vehicule}</td>
+          <td>${intervention.type}</td>
+          <td>${intervention.intervention}</td>
+          <td>${intervention.date}</td>
+          <td>${intervention.lieu}</td>
+          <td>${intervention.contact}</td>
+          <td>${intervention.finalite}</td>
+          <td>
+            <button class="editBtn" data-index="${index}">Modifier</button>
+            <button class="deleteBtn" data-index="${index}">Supprimer</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const interventionData = {
+        client: document.getElementById('client').value.trim(),
+        technicien: document.getElementById('technicien').value.trim(),
+        immat: document.getElementById('immat').value.trim(),
+        vehicule: document.getElementById('vehicule').value.trim(),
+        type: document.getElementById('type').value,
+        intervention: document.getElementById('intervention').value.trim(),
+        date: document.getElementById('dateIntervention').value,
+        lieu: document.getElementById('lieu').value.trim(),
+        contact: document.getElementById('contact').value.trim(),
+        finalite: document.getElementById('finalite').value.trim()
+      };
+
+      let data = JSON.parse(localStorage.getItem('interventions')) || [];
+
+      if (editIndex !== null) {
+        data[editIndex] = interventionData;
+        editIndex = null;
+      } else {
+        data.push(interventionData);
       }
-    }
 
-    if (e.target.classList.contains('editBtn')) {
-      const item = data[index];
-
-      // Remplir le formulaire avec les données à modifier
-      document.getElementById('client').value = item.client;
-      document.getElementById('technicien').value = item.technicien;
-      document.getElementById('immat').value = item.immat;
-      document.getElementById('vehicule').value = item.vehicule;
-      document.getElementById('type').value = item.type;
-      document.getElementById('intervention').value = item.intervention;
-      document.getElementById('dateIntervention').value = item.date;
-      document.getElementById('lieu').value = item.lieu;
-      document.getElementById('contact').value = item.contact;
-      document.getElementById('finalite').value = item.finalite;
-
-      editIndex = index;
-
-      // Faire défiler vers le formulaire
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-
-  // Exporter vers Excel
-  exportBtn.addEventListener('click', () => {
-    const data = JSON.parse(localStorage.getItem('interventions')) || [];
-    if (data.length === 0) {
-      alert("Aucune intervention à exporter.");
-      return;
-    }
-
-    const ws_data = [
-      ["Client", "Technicien", "Immat", "Véhicule", "Type", "Intervention", "Date", "Lieu", "Contact", "Finalité"]
-    ];
-
-    data.forEach(item => {
-      ws_data.push([
-        item.client,
-        item.technicien,
-        item.immat,
-        item.vehicule,
-        item.type,
-        item.intervention,
-        item.date,
-        item.lieu,
-        item.contact,
-        item.finalite
-      ]);
+      localStorage.setItem('interventions', JSON.stringify(data));
+      loadInterventions();
+      form.reset();
     });
 
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(ws_data);
-    XLSX.utils.book_append_sheet(wb, ws, "Interventions");
-    XLSX.writeFile(wb, "interventions.xlsx");
-  });
+    tableBody.addEventListener('click', (e) => {
+      const index = e.target.getAttribute('data-index');
+      let data = JSON.parse(localStorage.getItem('interventions')) || [];
 
-  // Recherche dans la table
-  searchInput.addEventListener('input', () => {
-    const filter = searchInput.value.toLowerCase();
-    const rows = tableBody.getElementsByTagName('tr');
+      if (e.target.classList.contains('deleteBtn')) {
+        if (confirm("Voulez-vous vraiment supprimer cette intervention ?")) {
+          data.splice(index, 1);
+          localStorage.setItem('interventions', JSON.stringify(data));
+          loadInterventions();
+        }
+      }
 
-    for (let row of rows) {
-      const cellsText = Array.from(row.cells).slice(0, -1)
-        .map(td => td.textContent.toLowerCase()).join(' ');
-      row.style.display = cellsText.includes(filter) ? '' : 'none';
-    }
-  });
+      if (e.target.classList.contains('editBtn')) {
+        const item = data[index];
+        document.getElementById('client').value = item.client;
+        document.getElementById('technicien').value = item.technicien;
+        document.getElementById('immat').value = item.immat;
+        document.getElementById('vehicule').value = item.vehicule;
+        document.getElementById('type').value = item.type;
+        document.getElementById('intervention').value = item.intervention;
+        document.getElementById('dateIntervention').value = item.date;
+        document.getElementById('lieu').value = item.lieu;
+        document.getElementById('contact').value = item.contact;
+        document.getElementById('finalite').value = item.finalite;
+        editIndex = index;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
 
-  // Charger au démarrage
-  loadInterventions();
-</script>
-<script>
-  function login(event) {
-    event.preventDefault(); // Empêche la page de se recharger
+    exportBtn.addEventListener('click', () => {
+      const data = JSON.parse(localStorage.getItem('interventions')) || [];
+      if (data.length === 0) {
+        alert("Aucune intervention à exporter.");
+        return;
+      }
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+      const ws_data = [
+        ["Client", "Technicien", "Immat", "Véhicule", "Type", "Intervention", "Date", "Lieu", "Contact", "Finalité"]
+      ];
 
-    if (username === "admin" && password === "1234") {
-      alert("Connexion réussie !");
-      localStorage.setItem("isLoggedIn", "true"); // stocke la connexion
-      window.location.href = "index.html"; // redirection vers la page principale
-    } else {
-      alert("Nom d'utilisateur ou mot de passe incorrect !");
-    }
-  }
-</script>
+      data.forEach(item => {
+        ws_data.push([
+          item.client,
+          item.technicien,
+          item.immat,
+          item.vehicule,
+          item.type,
+          item.intervention,
+          item.date,
+          item.lieu,
+          item.contact,
+          item.finalite
+        ]);
+      });
 
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Interventions");
+
+      XLSX.writeFile(wb, "interventions.xlsx");
+    });
+
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      const rows = tableBody.querySelectorAll('tr');
+
+      rows.forEach(row => {
+        const cellsText = row.textContent.toLowerCase();
+        row.style.display = cellsText.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Chargement des interventions au démarrage
+    loadInterventions();
+  </script>
 
 </body>
 </html>
