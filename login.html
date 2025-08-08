@@ -1,39 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Connexion</title>
+  <meta charset="UTF-8">
+  <title>Connexion</title>
 </head>
 <body>
-    <h1>Connexion</h1>
-    <form onsubmit="login(event)">
-        <label for="username">Nom d'utilisateur :</label>
-        <input type="text" id="username" required><br><br>
+  <h1>Connexion</h1>
+  <form onsubmit="login(event)">
+    <label for="username">Nom d'utilisateur:</label>
+    <input type="text" id="username" required><br><br>
 
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" required><br><br>
+    <label for="password">Mot de passe:</label>
+    <input type="password" id="password" required><br><br>
 
-        <button type="submit">Se connecter</button>
-    </form>
+    <button type="submit">Se connecter</button>
+  </form>
 
-    <script>
-        function login(event) {
-            event.preventDefault();
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+  <script>
+    function login(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-            // Identifiants fixes
-            const correctUsername = "admin";
-            const correctPassword = "1234";
-
-            if (username === correctUsername && password === correctPassword) {
-                localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("username", username);
-                window.location.href = "index.html";
-            } else {
-                alert("Identifiants incorrects");
-            }
-        }
-    </script>
+      if (username === "admin" && password === "1234") {
+        alert("Connexion réussie !");
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", username);
+        // Redirection vers la page principale
+        window.location.href = "index.html";
+      } else {
+        alert("Nom d'utilisateur ou mot de passe incorrect !");
+      }
+    }
+  </script>
 </body>
 </html>
