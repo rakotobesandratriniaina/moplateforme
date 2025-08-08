@@ -432,6 +432,18 @@
   // Charger au démarrage
   loadInterventions();
 </script>
+<script>
+    // Vérifie si l'utilisateur est connecté
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "login.html"; // redirige vers login si pas connecté
+    }
+
+    function logout() {
+        localStorage.removeItem("isLoggedIn");
+        alert("Déconnexion réussie !");
+        window.location.href = "login.html";
+    }
+</script>
 
 </body>
 </html>
