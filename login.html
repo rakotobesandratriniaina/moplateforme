@@ -3,34 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <title>Connexion</title>
+  <style>
+    /* Reset simple */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #333;
+    }
+
+    .login-container {
+      background: white;
+      padding: 2.5rem 3rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #5a3e99;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      margin-bottom: 1.3rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #764ba2;
+      outline: none;
+      box-shadow: 0 0 8px #b085d7;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #764ba2;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background: #5a3e99;
+    }
+
+    .error-message {
+      color: #e63946;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Connexion</h1>
-  <form id="loginForm">
-    <label for="username">Nom d'utilisateur :</label>
-    <input type="text" id="username" required />
-    <br />
-    <label for="password">Mot de passe :</label>
-    <input type="password" id="password" required />
-    <br />
-    <button type="submit">Se connecter</button>
-  </form>
+  <div class="login-container">
+    <h1>Connexion</h1>
+    <form id="loginForm" novalidate>
+      <div class="error-message" id="errorMsg">Nom d'utilisateur ou mot de passe incorrect !</div>
+      
+      <label for="username">Nom d'utilisateur :</label>
+      <input type="text" id="username" placeholder="Entrez votre nom d'utilisateur" required />
+
+      <label for="password">Mot de passe :</label>
+      <input type="password" id="password" placeholder="Entrez votre mot de passe" required />
+
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Empêche le rechargement de la page
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
 
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
-      console.log('Login attempt:', username, password);
+      // Cache le message d'erreur par défaut
+      errorMsg.style.display = 'none';
 
       if (username === 'admin' && password === '1234') {
         alert('Connexion réussie !');
-        sessionStorage.setItem('authenticated', 'true');  // stocke la session
-        window.location.href = 'index.html';  // redirection vers la page principale
+        sessionStorage.setItem('authenticated', 'true');
+        window.location.href = 'index.html';
       } else {
-        alert("Nom d'utilisateur ou mot de passe incorrect !");
+        // Affiche message erreur
+        errorMsg.style.display = 'block';
       }
     });
   </script>
